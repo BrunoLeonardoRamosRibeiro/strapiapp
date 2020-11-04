@@ -266,7 +266,7 @@ class FreeContent {
     component: json["__component"],
     id: json["_id"],
     description: json["description"],
-    date: DateTime.parse(json["date"]),
+    date: json["date"] == null ? DateTime.parse("1899-12-30") : DateTime.parse(json["date"]),
     time: json["time"],
     createdAt: DateTime.parse(json["createdAt"]),
     updatedAt: DateTime.parse(json["updatedAt"]),

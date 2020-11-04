@@ -12,11 +12,11 @@ class ArtistRepository {
 
   SharedPref sharedPref = SharedPref();
 
-  Future<Either<String, ArtistByUserId>> getArtistByUserId(
+  Future<Either<String, List<Artist>>> getArtistByUserId(
       {@required String userId, @required String jwt}) async {
     print('ArtistByUserId');
 
-    ArtistByUserId artistByUserId = ArtistByUserId();
+    List<Artist> followedArtists;
 
     try {
       var url = '${AppAssets.BASE_URL}${AppAssets.URL_ARTISTS_BY_USER_ID}$userId';
@@ -32,28 +32,71 @@ class ArtistRepository {
 
       if (response.statusCode == 200) {
 
-        artistByUserId = ArtistByUserId.fromJson(json.decode(response.body));
-
-        List<Artist> followedArtists;
         Iterable listaArtists = json.decode(response.body)['artists'];
         followedArtists = listaArtists.map((model) => Artist.fromJson(model)).toList();
+
         followedArtists.forEach((element) {
-          print('ARTISTA SEGUIDO ===> '+element.name);
+          print('Nome do Artista => ${element.name}');
         });
 
         sharedPref.save("followedArtists", followedArtists);
 
-        sharedPref.save("artistByUserId", artistByUserId);
-        //sharedPref.save("fanByUserId", fanByUserId);
-        return Right(artistByUserId);
+        return Right(followedArtists);
       } else {
-        artistByUserId = null;
-        return Left('Erro ${response.statusCode} artistByUserId ');
+        followedArtists = null;
+        return Left('Erro ${response.statusCode} followedArtists ');
       }
     } catch (e) {
-      artistByUserId = null;
-      return Left('Sem de Conexão');
+      followedArtists = null;
+      return Left('Exceção: $e');
     }
+  }
+
+  Future<List<Artist>> getArtist(
+      {@required String userId, @required String jwt}) async {
+    print('ArtistByUserId');
+
+    List<Artist> followedArtists;
+
+      var url = '${AppAssets.BASE_URL}${AppAssets.URL_ARTISTS_BY_USER_ID}$userId';
+      var header = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $jwt",
+      };
+
+      print(url);
+
+      var response = await http.get(url, headers: header);
+      print(response.statusCode);
+
+      if (response.statusCode == 200) {
+
+        Iterable listaArtists = json.decode(response.body)['artists'];
+        followedArtists = listaArtists.map((model) => Artist.fromJson(model)).toList();
+
+
+
+        followedArtists.forEach((element) {
+          print('Nome do Artista => ${element.name}');
+        });
+
+        sharedPref.save("followedArtists", followedArtists);
+
+        return followedArtists;
+      } else {
+        followedArtists = null;
+        return followedArtists;
+      }
+  }
+
+
+  Future<List<Artist>> fetchFollowedArtistsOffLine() async {
+    List<Artist> followedArtists;
+
+    Iterable lista = await sharedPref.read("followedArtists");
+    followedArtists = lista.map((model) => Artist.fromJson(model)).toList();
+
+    return followedArtists;
   }
 
 
