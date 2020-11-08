@@ -1,7 +1,11 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:strapiapp/controllers/home_page_controller.dart';
 import 'package:strapiapp/pages/load_from_web_api_page.dart';
+import 'package:strapiapp/pages/upload_page.dart';
+
 
 class HomePage extends StatelessWidget {
   @override
@@ -25,9 +29,9 @@ class HomePage extends StatelessWidget {
               ),
               SizedBox(height: 16),
               RaisedButton(
-                child: Text('CARREGAR DO SHARED LOCAL'),
+                child: Text('UPLOAD DE IMAGEM'),
                 onPressed: () {
-                  // TODO: ABRIR NOVA PAGE
+                  Get.to(UploadPage());
                 },
               ),
 
@@ -37,4 +41,6 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
+
+
 }
