@@ -51,12 +51,24 @@ class _UploadPageState extends State<UploadPage> {
                       : Image.file(_image),
                 ),
               ),
+              Visibility(
+                visible: upload == true,
+                child: Center(child: CircularProgressIndicator(),),
+              ),
             ],
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: getImage,
+        onPressed: () async{
+          setState(() {
+            upload = true;
+          });
+          await getImage();
+          setState(() {
+            upload = false;
+          });
+        },
         tooltip: 'Tirar Foto',
         child: Icon(Icons.camera),
       ),
@@ -86,7 +98,7 @@ class _UploadPageState extends State<UploadPage> {
     var request = new http.MultipartRequest("POST", uri);
     var multipartFile = new http.MultipartFile('files', stream, length,
         filename: basename(imageFile.path),
-        contentType: MediaType('image', 'png'));
+        contentType: MediaType('image', 'jpg'));
 
     request.files.add(multipartFile);
     var response = await request.send();
